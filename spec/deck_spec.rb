@@ -20,4 +20,28 @@ RSpec.describe Deck do
     expect(deck.rank_of_card_at(0)).to eq(13)
   end
 
+  it "returns array of cards ranked 11 or higher" do
+    card = Card.new(:spade, "3", 3)
+    card2 = Card.new(:diamond, "King", 13)
+    card3 = Card.new(:heart, "Jack", 11)
+    card4 = Card.new(:club, "10", 10)
+    deck = Deck.new([card, card2, card3, card4])
+
+    expect(deck.high_ranking_cards).to eq([card2,card3])
+  end
+
+  it "returns percent of deck that is high ranking" do
+    card = Card.new(:spade, "3", 3)
+    card2 = Card.new(:diamond, "King", 13)
+    card3 = Card.new(:heart, "Jack", 11)
+    card4 = Card.new(:club, "10", 10)
+    card5 = Card.new(:heart, "7", 7)
+    deck = Deck.new([card, card2, card3, card4])
+
+    expect(deck.percent_high_ranking).to eq(50.00)
+  end
+
+
+
+
 end

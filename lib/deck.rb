@@ -12,15 +12,18 @@ class Deck
     @cards[index].rank
   end
 
+  # returns array of card instances ranked above 11
+  def high_ranking_cards
+    @cards.select { |x| x.rank > 10 }
+  end
 
-
-
-
-
-
-
-
-
+  # returns percentage of cards ranked above 10 as float
+  def percent_high_ranking
+    high_card_count = high_ranking_cards.count.to_f
+    total_card_count = @cards.count.to_f
+    percent = high_card_count / total_card_count * 100.00
+    percent.round(2)
+  end
 
 
 
