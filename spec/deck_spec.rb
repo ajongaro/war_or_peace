@@ -41,7 +41,24 @@ RSpec.describe Deck do
     expect(deck.percent_high_ranking).to eq(50.00)
   end
 
+  it "removes top card from the deck" do
+    card = Card.new(:spade, "3", 3)
+    card2 = Card.new(:diamond, "King", 13)
+    card3 = Card.new(:heart, "Jack", 11)
+    deck = Deck.new([card, card2, card3])
 
+    deck.remove_card
+    expect(deck.cards).to eq([card2, card3])
+  end
 
+  it "adds a card to end of array" do
+    card = Card.new(:spade, "3", 3)
+    card2 = Card.new(:diamond, "King", 13)
+    card3 = Card.new(:heart, "Jack", 11)
+    deck = Deck.new([card, card2])
 
+    deck.add_card(card3)
+    expect(deck.cards).to eq([card, card2, card3])
+  end
+  
 end

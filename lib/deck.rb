@@ -21,10 +21,16 @@ class Deck
   def percent_high_ranking
     high_card_count = high_ranking_cards.count.to_f
     total_card_count = @cards.count.to_f
-    percent = high_card_count / total_card_count * 100.00
-    percent.round(2)
+    return (high_card_count / total_card_count * 100.00).round(2)
   end
 
+  def remove_card
+    @cards.shift
+  end
+
+  def add_card(card_to_add)
+    @cards << card_to_add
+  end
 
 
 end
