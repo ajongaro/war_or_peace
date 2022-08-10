@@ -24,16 +24,9 @@ class Turn
   end
 
   def winner
-    # if basic, it doesn't match so which is higher?
-    if type == :basic
-      return @player1 if card_ranker(@player1, 0) > card_ranker(@player2, 0)
-      @player2
-    # if war, [0] matches and [2] does not, so which [2] is higher?
-    elsif type == :war
-      return @player1 if card_ranker(@player1, 2) > card_ranker(@player2, 2)
-    else
-      'No Winner'
-    end
+    return who_wins(0) if type == :basic
+    return who_wins(2) if type == :war
+    'No Winner' # M.A.D.
   end
 
 
@@ -49,6 +42,13 @@ class Turn
     return false if p1_card.nil? || p2_card.nil?
     p1_card == p2_card # true if match, false if no match
   end
-
+  # for winner method;
+  def who_wins(card)
+    if card_ranker(@player1, card) > card_ranker(@player2, card)
+      @player1
+    else
+      @player2
+    end
+  end
 
 end
