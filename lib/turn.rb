@@ -32,11 +32,9 @@ class Turn
   private
   # ignores cards that don't exist and returns rank of rest
   def card_ranker(player, index)
-    if player.deck.cards[index] == nil
-      nil
-    else
-      player.deck.cards[index].rank
-    end
+    card_to_check = player.deck.cards[index]
+    return nil if card_to_check == nil
+    card_to_check.rank
   end
 
 end
