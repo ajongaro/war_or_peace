@@ -15,26 +15,27 @@ class Turn
     p2_card_1 = card_ranker(@player2, 0)
     p2_card_3 = card_ranker(@player2, 2)
 
-    # logic for game type (shameless green)
-    if p1_card_1 == p2_card_1 # confirms a :war, checks for :destruction
-      if p1_card_3 == p2_card_3 && p1_card_3 != nil # checks if match and not nil
-        :mutually_assured_destruction
-      else
-        :war
-      end
-    else
-      :basic
-    end
-
+    # immediate eject to basic if first cards don't match
+    return :basic if p1_card_1 != p2_card_1
+    # if they are the same, and [2] is also, and neither is nil
+    return :mutually_assured_destruction if match_not_nil(p1_card_3, p2_card_3)
+    # if you've made it this far, then this means...
+    return :war
   end
 
 
   private
-  # ignores cards that don't exist and returns rank of rest
+  # for type method; ignores cards that don't exist and returns rank of rest
   def card_ranker(player, index)
     card_to_check = player.deck.cards[index]
     return nil if card_to_check == nil
     card_to_check.rank
   end
+  # for type method; determines if destruction will occur
+  def match_not_nil(p1_card, p2_card)
+    return false if p1_card.nil? || p2_card.nil?
+    p1_card == p2_card # true if match, false if no match
+  end
+
 
 end
