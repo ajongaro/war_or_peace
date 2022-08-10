@@ -10,8 +10,8 @@ class Turn
 
   # determines which type of turn will occur
   def type
-    p1_card_1 = card_ranker(@player1, 0)
-    p1_card_3 = card_ranker(@player1, 2)
+    p1_card_1 = card_ranker(@player1, 0) # should these be class variables?
+    p1_card_3 = card_ranker(@player1, 2) # probably b/c they're repeated
     p2_card_1 = card_ranker(@player2, 0)
     p2_card_3 = card_ranker(@player2, 2)
 
@@ -23,9 +23,18 @@ class Turn
     return :war
   end
 
+  def winner
+    if type == :basic
+      return @player1 if card_ranker(@player1, 0) > card_ranker(@player2, 0)
+      @player2
+    else
+
+    end
+  end
+
 
   private
-  # for type method; ignores cards that don't exist and returns rank of rest
+  # for type & winner method; ignores cards that don't exist and returns rank of rest
   def card_ranker(player, index)
     card_to_check = player.deck.cards[index]
     return nil if card_to_check == nil

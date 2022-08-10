@@ -76,6 +76,18 @@ RSpec.describe Turn do
     expect(turn.type).to eq(:war)
   end
 
+  it 'determines winner for basic type' do
+    card1 = Card.new(:diamond, 'Queen', 12)
+    card2 = Card.new(:spade, '3', 3)
+    deck1 = Deck.new([card1])
+    deck2 = Deck.new([card2])
+    player1 = Player.new('Tony', deck1)
+    player2 = Player.new('Lisa', deck2)
+    turn = Turn.new(player1, player2)
+
+    expect(turn.winner).to eq(player1)
+  end
+    
 
 
 end
