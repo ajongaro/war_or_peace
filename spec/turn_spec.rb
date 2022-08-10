@@ -116,4 +116,62 @@ RSpec.describe Turn do
     expect(turn.winner).to eq('No Winner')
   end
 
+  it 'piles cards into spoils of war for basic' do
+    card1 = Card.new(:diamond, 'Queen', 12)
+    card2 = Card.new(:spade, '3', 3)
+    deck1 = Deck.new([card1])
+    deck2 = Deck.new([card2])
+    player1 = Player.new('Tony', deck1)
+    player2 = Player.new('Lisa', deck2)
+    turn = Turn.new(player1, player2)
+
+    turn.pile_cards
+    expect(turn.spoils_of_war.include?(card1 && card2)).to be true
+  end
+
+  it 'piles cards into spoils for war' do
+    card1 = Card.new(:diamond, 'Queen', 12)
+    card2 = Card.new(:spade, '4', 4)
+    card3 = Card.new(:heart, 'Queen', 12)
+    card4 = Card.new(:club, '3', 3)
+    deck1 = Deck.new([card1, :foo1, card2])
+    deck2 = Deck.new([card3, :foo2, card4])
+    player1 = Player.new('Clarisa', deck1)
+    player2 = Player.new('Rachel', deck2)
+    turn = Turn.new(player1, player2)
+
+    turn.pile_cards
+
+    expect(turn.spoils_of_war.include?(card1)).to be true
+    expect(turn.spoils_of_war.include?(card2)).to be true
+    expect(turn.spoils_of_war.include?(card3)).to be true
+    expect(turn.spoils_of_war.include?(card4)).to be true
+    expect(turn.spoils_of_war.include?(:foo1)).to be true
+    expect(turn.spoils_of_war.include?(:foo2)).to be true
+    expect(player1.deck.cards).to eq([])
+    expect(player2.deck.cards).to eq([])
+  end
+
+  it 'six cards lost when mutually assured destruction' do
+    card1 = Card.new(:diamond, 'Queen', 12)
+    card2 = Card.new(:spade, '3', 3)
+    card3 = Card.new(:heart, 'Queen', 12)
+    card4 = Card.new(:club, '3', 3)
+    deck1 = Deck.new([card1, nil, card2])
+    deck2 = Deck.new([card3, nil, card4])
+    player1 = Player.new('Clarisa', deck1)
+    player2 = Player.new('Rachel', deck2)
+    turn = Turn.new(player1, player2)
+
+    expect(turn.winner).to eq('No Winner')
+    turn.pile_cards
+    expect(turn.spoils_of_war.include?(card1)).to be false
+    expect(turn.spoils_of_war.include?(card2)).to be false
+    expect(turn.spoils_of_war.include?(card3)).to be false
+    expect(turn.spoils_of_war.include?(card4)).to be false
+    expect(turn.spoils_of_war.include?(:foo1)).to be false
+    expect(turn.spoils_of_war.include?(:foo2)).to be false
+    expect(player1.deck.cards).to eq([])
+    expect(player2.deck.cards).to eq([])
+  end
 end
