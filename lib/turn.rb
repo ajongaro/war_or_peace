@@ -24,11 +24,15 @@ class Turn
   end
 
   def winner
+    # if basic, it doesn't match so which is higher?
     if type == :basic
       return @player1 if card_ranker(@player1, 0) > card_ranker(@player2, 0)
       @player2
+    # if war, [0] matches and [2] does not, so which [2] is higher?
+    elsif type == :war
+      return @player1 if card_ranker(@player1, 2) > card_ranker(@player2, 2)
     else
-
+      'No Winner'
     end
   end
 
