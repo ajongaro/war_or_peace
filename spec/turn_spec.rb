@@ -20,158 +20,127 @@ RSpec.describe Turn do
     expect(turn.spoils_of_war).to eq([])
   end
 
-  it 'is basic type when different ranks' do
-    card1 = Card.new(:diamond, 'Jack', 11)
-    card2 = Card.new(:spade, '3', 3)
-    card3 = Card.new(:heart, 'Queen', 12)
-    card4 = Card.new(:club, '3', 3)
-    deck1 = Deck.new([card1, card2])
-    deck2 = Deck.new([card3, card4])
-    player1 = Player.new('Clarisa', deck1)
-    player2 = Player.new('Rachel', deck2)
-    turn = Turn.new(player1, player2)
+  let(:card_rank_12) { Card.new(:diamond, 'Queen', 12) }
+  let(:card_rank_3) { Card.new(:spade, '3', 3) }
+  let(:card_rank_4) { Card.new(:spade, '4', 4)}
 
-    expect(turn.type).to eq(:basic)
+  describe '#type' do
+
+    it 'is basic type when different ranks' do
+      deck1 = Deck.new([card_rank_4, card_rank_3])
+      deck2 = Deck.new([card_rank_12, card_rank_3])
+      player1 = Player.new('Clarisa', deck1)
+      player2 = Player.new('Rachel', deck2)
+      turn = Turn.new(player1, player2)
+
+      expect(turn.type).to eq(:basic)
+    end
+
+    it 'is war type when ranks ranks are same' do
+      deck1 = Deck.new([card_rank_12, card_rank_3])
+      deck2 = Deck.new([card_rank_12, card_rank_3])
+      player1 = Player.new('Clarisa', deck1)
+      player2 = Player.new('Rachel', deck2)
+      turn = Turn.new(player1, player2)
+
+      expect(turn.type).to eq(:war)
+    end
+
+    it 'is destruction type when [0] and [2] are same rank' do
+      deck1 = Deck.new([card_rank_12, nil, card_rank_3])
+      deck2 = Deck.new([card_rank_12, nil, card_rank_3])
+      player1 = Player.new('Clarisa', deck1)
+      player2 = Player.new('Rachel', deck2)
+      turn = Turn.new(player1, player2)
+
+      expect(turn.type).to eq(:mutually_assured_destruction)
+    end
+
+    it 'is not destruction type if a card[2] is nil' do
+      deck1 = Deck.new([card_rank_12, card_rank_3, card_rank_4])
+      deck2 = Deck.new([card_rank_12, card_rank_3]) # [02] is nil here
+      player1 = Player.new('Clarisa', deck1)
+      player2 = Player.new('Rachel', deck2)
+      turn = Turn.new(player1, player2)
+
+      expect(turn.type).to eq(:war)
+    end
   end
 
-  it 'is war type when ranks ranks are same' do
-    card1 = Card.new(:diamond, 'Queen', 12)
-    card2 = Card.new(:spade, '3', 3)
-    card3 = Card.new(:heart, 'Queen', 12)
-    card4 = Card.new(:club, '3', 3)
-    deck1 = Deck.new([card1, card2])
-    deck2 = Deck.new([card3, card4])
-    player1 = Player.new('Clarisa', deck1)
-    player2 = Player.new('Rachel', deck2)
-    turn = Turn.new(player1, player2)
+  describe '#winner' do
 
-    expect(turn.type).to eq(:war)
+    it 'determines winner for basic type' do
+      deck1 = Deck.new([card_rank_12])
+      deck2 = Deck.new([card_rank_3])
+      player1 = Player.new('Tony', deck1)
+      player2 = Player.new('Lisa', deck2)
+      turn = Turn.new(player1, player2)
+
+      expect(turn.winner).to eq(player1)
+    end
+
+    it 'determines winner of war type' do
+      deck1 = Deck.new([card_rank_12, nil, card_rank_4])
+      deck2 = Deck.new([card_rank_12, nil, card_rank_3])
+      player1 = Player.new('Clarisa', deck1)
+      player2 = Player.new('Rachel', deck2)
+      turn = Turn.new(player1, player2)
+
+      expect(turn.winner).to eq(player1)
+    end
+
+    it 'has no winner when mutually assured dest' do
+      deck1 = Deck.new([card_rank_12, nil, card_rank_3])
+      deck2 = Deck.new([card_rank_12, nil, card_rank_3])
+      player1 = Player.new('Clarisa', deck1)
+      player2 = Player.new('Rachel', deck2)
+      turn = Turn.new(player1, player2)
+
+      expect(turn.winner).to eq('No Winner')
+    end
   end
 
-  it 'is destruction type when [0] and [2] are same rank' do
-    card1 = Card.new(:diamond, 'Queen', 12)
-    card2 = Card.new(:spade, '3', 3)
-    card3 = Card.new(:heart, 'Queen', 12)
-    card4 = Card.new(:club, '3', 3)
-    deck1 = Deck.new([card1, nil, card2])
-    deck2 = Deck.new([card3, nil, card4])
-    player1 = Player.new('Clarisa', deck1)
-    player2 = Player.new('Rachel', deck2)
-    turn = Turn.new(player1, player2)
+  describe '#piles_cards' do
+    it 'piles cards into spoils of war for basic' do
+      deck1 = Deck.new([card_rank_12])
+      deck2 = Deck.new([card_rank_3])
+      player1 = Player.new('Tony', deck1)
+      player2 = Player.new('Lisa', deck2)
+      turn = Turn.new(player1, player2)
 
-    expect(turn.type).to eq(:mutually_assured_destruction)
-  end
+      turn.pile_cards
+      expect(turn.spoils_of_war.include?(card_rank_12 && card_rank_3)).to be true
+    end
 
-  it 'is not destruction type if a card[2] is nil' do
-    card1 = Card.new(:diamond, 'Queen', 12)
-    card2 = Card.new(:spade, '3', 3)
-    card3 = Card.new(:heart, 'Queen', 12)
-    card4 = Card.new(:club, '3', 3)
-    deck1 = Deck.new([card1, card2, card3])
-    deck2 = Deck.new([card3, card4]) # [02] is nil here
-    player1 = Player.new('Clarisa', deck1)
-    player2 = Player.new('Rachel', deck2)
-    turn = Turn.new(player1, player2)
+    it 'piles cards into spoils for war' do
+      deck1 = Deck.new([card_rank_12, :foo1, card_rank_4])
+      deck2 = Deck.new([card_rank_12, :foo2, card_rank_3])
+      player1 = Player.new('Clarisa', deck1)
+      player2 = Player.new('Rachel', deck2)
+      turn = Turn.new(player1, player2)
 
-    expect(turn.type).to eq(:war)
-  end
+      turn.pile_cards
 
-  it 'determines winner for basic type' do
-    card1 = Card.new(:diamond, 'Queen', 12)
-    card2 = Card.new(:spade, '3', 3)
-    deck1 = Deck.new([card1])
-    deck2 = Deck.new([card2])
-    player1 = Player.new('Tony', deck1)
-    player2 = Player.new('Lisa', deck2)
-    turn = Turn.new(player1, player2)
+      expect(turn.spoils_of_war.size).to eq(6)
 
-    expect(turn.winner).to eq(player1)
-  end
+      expect(player1.deck.cards).to eq([])
+      expect(player2.deck.cards).to eq([])
+    end
 
-  it 'determines winner of war type' do
-    card1 = Card.new(:diamond, 'Queen', 12)
-    card2 = Card.new(:spade, '4', 4)
-    card3 = Card.new(:heart, 'Queen', 12)
-    card4 = Card.new(:club, '3', 3)
-    deck1 = Deck.new([card1, nil, card2])
-    deck2 = Deck.new([card3, nil, card4])
-    player1 = Player.new('Clarisa', deck1)
-    player2 = Player.new('Rachel', deck2)
-    turn = Turn.new(player1, player2)
+    it 'six cards lost when mutually assured destruction' do
+      deck1 = Deck.new([card_rank_12, nil, card_rank_3])
+      deck2 = Deck.new([card_rank_12, nil, card_rank_3])
+      player1 = Player.new('Clarisa', deck1)
+      player2 = Player.new('Rachel', deck2)
+      turn = Turn.new(player1, player2)
 
-    expect(turn.winner).to eq(player1)
-  end
+      expect(turn.winner).to eq('No Winner')
 
-  it 'has no winner when mutually assured dest' do
-    card1 = Card.new(:diamond, 'Queen', 12)
-    card2 = Card.new(:spade, '3', 3)
-    card3 = Card.new(:heart, 'Queen', 12)
-    card4 = Card.new(:club, '3', 3)
-    deck1 = Deck.new([card1, nil, card2])
-    deck2 = Deck.new([card3, nil, card4])
-    player1 = Player.new('Clarisa', deck1)
-    player2 = Player.new('Rachel', deck2)
-    turn = Turn.new(player1, player2)
+      turn.pile_cards
+      expect(turn.spoils_of_war).to eq([])
 
-    expect(turn.winner).to eq('No Winner')
-  end
-
-  it 'piles cards into spoils of war for basic' do
-    card1 = Card.new(:diamond, 'Queen', 12)
-    card2 = Card.new(:spade, '3', 3)
-    deck1 = Deck.new([card1])
-    deck2 = Deck.new([card2])
-    player1 = Player.new('Tony', deck1)
-    player2 = Player.new('Lisa', deck2)
-    turn = Turn.new(player1, player2)
-
-    turn.pile_cards
-    expect(turn.spoils_of_war.include?(card1 && card2)).to be true
-  end
-
-  it 'piles cards into spoils for war' do
-    card1 = Card.new(:diamond, 'Queen', 12)
-    card2 = Card.new(:spade, '4', 4)
-    card3 = Card.new(:heart, 'Queen', 12)
-    card4 = Card.new(:club, '3', 3)
-    deck1 = Deck.new([card1, :foo1, card2])
-    deck2 = Deck.new([card3, :foo2, card4])
-    player1 = Player.new('Clarisa', deck1)
-    player2 = Player.new('Rachel', deck2)
-    turn = Turn.new(player1, player2)
-
-    turn.pile_cards
-
-    expect(turn.spoils_of_war.include?(card1)).to be true
-    expect(turn.spoils_of_war.include?(card2)).to be true
-    expect(turn.spoils_of_war.include?(card3)).to be true
-    expect(turn.spoils_of_war.include?(card4)).to be true
-    expect(turn.spoils_of_war.include?(:foo1)).to be true
-    expect(turn.spoils_of_war.include?(:foo2)).to be true
-    expect(player1.deck.cards).to eq([])
-    expect(player2.deck.cards).to eq([])
-  end
-
-  it 'six cards lost when mutually assured destruction' do
-    card1 = Card.new(:diamond, 'Queen', 12)
-    card2 = Card.new(:spade, '3', 3)
-    card3 = Card.new(:heart, 'Queen', 12)
-    card4 = Card.new(:club, '3', 3)
-    deck1 = Deck.new([card1, nil, card2])
-    deck2 = Deck.new([card3, nil, card4])
-    player1 = Player.new('Clarisa', deck1)
-    player2 = Player.new('Rachel', deck2)
-    turn = Turn.new(player1, player2)
-
-    expect(turn.winner).to eq('No Winner')
-    turn.pile_cards
-    expect(turn.spoils_of_war.include?(card1)).to be false
-    expect(turn.spoils_of_war.include?(card2)).to be false
-    expect(turn.spoils_of_war.include?(card3)).to be false
-    expect(turn.spoils_of_war.include?(card4)).to be false
-    expect(turn.spoils_of_war.include?(:foo1)).to be false
-    expect(turn.spoils_of_war.include?(:foo2)).to be false
-    expect(player1.deck.cards).to eq([])
-    expect(player2.deck.cards).to eq([])
+      expect(player1.deck.cards).to eq([])
+      expect(player2.deck.cards).to eq([])
+    end
   end
 end

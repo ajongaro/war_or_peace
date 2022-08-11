@@ -10,17 +10,16 @@ class Turn
 
   # determines which type of turn will occur
   def type
-    p1_c1_rank = card_ranker(@player1, 0) # should these be class variables?
-    p1_c3_rank = card_ranker(@player1, 2) # probably b/c they're repeated below
-    p2_c1_rank = card_ranker(@player2, 0)
-    p2_c3_rank = card_ranker(@player2, 2)
+    p1_c1_rank = ranker(@player1, 0) # should these be class variables?
+    p1_c3_rank = ranker(@player1, 2) # probably b/c they're repeated below
+    p2_c1_rank = ranker(@player2, 0)
+    p2_c3_rank = ranker(@player2, 2)
 
-    # immediate eject to basic if first cards don't match
     return :basic if p1_c1_rank != p2_c1_rank
     # if they are the same, and [2] is also, and neither is nil
     return :mutually_assured_destruction if matched_not_nil(p1_c3_rank, p2_c3_rank)
     # if you've made it this far, then this means...
-    :war
+    return :war
   end
 
   def winner
@@ -33,36 +32,35 @@ class Turn
 
   def pile_cards
     if type == :basic
-      @spoils_of_war << @player1.deck.cards.shift
-      @spoils_of_war << @player2.deck.cards.shift
+      pile_and_flatten(1)
     elsif type == :war
-      3.times do
-        @spoils_of_war << @player1.deck.cards.shift
-        @spoils_of_war << @player2.deck.cards.shift
-      end
+      pile_and_flatten(3)
     else
-      3.times do
-        @player1.deck.cards.shift
-        @player2.deck.cards.shift
-      end
+      @player1.deck.cards.slice!(0..2)
+      @player2.deck.cards.slice!(0..2)
     end
   end
 
   private
+  def pile_and_flatten(how_many)
+    @spoils_of_war << @player1.deck.cards.slice!(0, how_many)
+    @spoils_of_war << @player2.deck.cards.slice!(0, how_many)
+    @spoils_of_war.flatten!
+  end
+
   # for type & winner method; ignores cards that don't exist and returns rank of rest
-  def card_ranker(player, index)
+  def ranker(player, index)
     card_to_check = player.deck.cards[index]
     return nil if card_to_check == nil
     card_to_check.rank
   end
   # for type method; determines if destruction will occur
   def matched_not_nil(p1_card, p2_card)
-    return false if p1_card.nil? || p2_card.nil?
-    p1_card == p2_card # true if match, false if no match
+    p1_card == p2_card && p1_card.nil? == false
   end
   # for winner method; takes index position and returns winning player
   def who_wins(card)
-    if card_ranker(@player1, card) > card_ranker(@player2, card)
+    if ranker(@player1, card) > ranker(@player2, card)
       @player1
     else
       @player2
