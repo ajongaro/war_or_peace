@@ -113,8 +113,8 @@ RSpec.describe Turn do
     end
 
     it 'piles cards into spoils for war' do
-      deck1 = Deck.new([card_rank_12, :foo1, card_rank_4])
-      deck2 = Deck.new([card_rank_12, :foo2, card_rank_3])
+      deck1 = Deck.new([card_rank_12, card_rank_3, card_rank_4])
+      deck2 = Deck.new([card_rank_12, card_rank_4, card_rank_3])
       player1 = Player.new('Clarisa', deck1)
       player2 = Player.new('Rachel', deck2)
       turn = Turn.new(player1, player2)
@@ -141,6 +141,61 @@ RSpec.describe Turn do
 
       expect(player1.deck.cards).to eq([])
       expect(player2.deck.cards).to eq([])
+    end
+  end
+
+  describe '#award_spoils' do
+    it "awards spoils pile to winning player of war" do
+      deck1 = Deck.new([card_rank_12, card_rank_3, card_rank_4])
+      deck2 = Deck.new([card_rank_12, card_rank_4, card_rank_3])
+      player1 = Player.new('Clarisa', deck1)
+      player2 = Player.new('Rachel', deck2)
+      turn = Turn.new(player1, player2)
+
+      expect(turn.winner).to eq(player1)
+      winner = turn.winner
+      turn.pile_cards
+      # require "pry"; binding.pry
+      turn.award_spoils(winner)
+
+      expect(turn.spoils_of_war).to eq([])
+      expect(player2.deck.cards.count).to eq(0)
+      expect(player1.deck.cards.count).to eq(6)
+    end
+
+    it "awards spoils pile to winning player of basic" do
+      deck1 = Deck.new([card_rank_12, card_rank_3, card_rank_4])
+      deck2 = Deck.new([card_rank_3, card_rank_4, card_rank_3])
+      player1 = Player.new('Clarisa', deck1)
+      player2 = Player.new('Rachel', deck2)
+      turn = Turn.new(player1, player2)
+
+      expect(turn.winner).to eq(player1)
+      winner = turn.winner
+      turn.pile_cards
+      # require "pry"; binding.pry
+      turn.award_spoils(winner)
+
+      expect(turn.spoils_of_war).to eq([])
+      expect(player2.deck.cards.count).to eq(2)
+      expect(player1.deck.cards.count).to eq(4)
+    end
+
+    it "doesn't award anything during destruction" do
+      deck1 = Deck.new([card_rank_12, card_rank_3, card_rank_4])
+      deck2 = Deck.new([card_rank_12, card_rank_4, card_rank_4])
+      player1 = Player.new('Clarisa', deck1)
+      player2 = Player.new('Rachel', deck2)
+      turn = Turn.new(player1, player2)
+
+      expect(turn.winner).to eq('No Winner')
+      winner = turn.winner
+      turn.pile_cards
+      turn.award_spoils(winner)
+
+      expect(turn.spoils_of_war).to eq([])
+      expect(player2.deck.cards.count).to eq(0)
+      expect(player1.deck.cards.count).to eq(0)
     end
   end
 end
