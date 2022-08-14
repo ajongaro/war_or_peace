@@ -10,60 +10,68 @@ class Turn
 
   # determines which type of turn will occur
   def type
-    p1_c1_rank = ranker(@player1, 0) # should these be class variables?
-    p1_c3_rank = ranker(@player1, 2) # probably b/c they're repeated below
-    p2_c1_rank = ranker(@player2, 0)
-    p2_c3_rank = ranker(@player2, 2)
-
-    return :basic if p1_c1_rank != p2_c1_rank
-    # if they are the same, and [2] is also, and neither is nil
-    return :mutually_assured_destruction if matched_not_nil(p1_c3_rank, p2_c3_rank)
-    # if you've made it this far, then this means...
+    @p1_c1 = card_ranker(@player1, 0)
+    @p1_c3 = card_ranker(@player1, 2)
+    @p2_c1 = card_ranker(@player2, 0)
+    @p2_c3 = card_ranker(@player2, 2)
+    return :basic if @p1_c1 != @p2_c1
+    return :mutually_assured_destruction if matched_not_nil
     return :war
   end
 
+  # determines if 3rd card is matched && not a nil value
+  def matched_not_nil
+    @p1_c3 == @p2_c3 && @p1_c3.nil? == false
+  end
+
+  # returns the winner of specified match based on type
   def winner
     first_card = 0
     third_card = 2
-    return who_wins(first_card) if type == :basic
-    return who_wins(third_card) if type == :war
+    return which_card_wins(first_card) if type == :basic
+    return which_card_wins(third_card) if type == :war
     'No Winner' # M.A.D.
   end
 
-  def pile_cards
-    if type == :basic
-      pile_and_flatten(1)
-    elsif type == :war
-      pile_and_flatten(3)
-    else
-      @player1.deck.cards.slice!(0..2)
-      @player2.deck.cards.slice!(0..2)
-    end
+  # returns which player has the winning card each round
+  def which_card_wins(card)
+    return @player1 if card_ranker(@player1, card) > card_ranker(@player2, card)
+    @player2
   end
 
-  private
+  # pulls rank of card or returns nil if no card exists
+  def card_ranker(player, index)
+    players_card_to_check = player.deck.cards[index]
+    return nil if players_card_to_check == nil
+    players_card_to_check.rank
+  end
+
+  # piles active cards into spoils of war or destroys them
+  def pile_cards
+    return pile_and_flatten(1) if type == :basic
+    return pile_and_flatten(3) if type == :war
+    remove_cards(@player1, 3)
+    remove_cards(@player2, 3)
+  end
+
+  # access, delete, and return specified number of cards
+  def remove_cards(player, how_many)
+    player.deck.cards.slice!(0, how_many)
+  end
+
+  # adds specified cards to spoils of war and flattens
   def pile_and_flatten(how_many)
-    @spoils_of_war << @player1.deck.cards.slice!(0, how_many)
-    @spoils_of_war << @player2.deck.cards.slice!(0, how_many)
+    @spoils_of_war << remove_cards(@player1, how_many)
+    @spoils_of_war << remove_cards(@player2, how_many)
     @spoils_of_war.flatten!
   end
 
-  # for type & winner method; ignores cards that don't exist and returns rank of rest
-  def ranker(player, index)
-    card_to_check = player.deck.cards[index]
-    return nil if card_to_check == nil
-    card_to_check.rank
-  end
-  # for type method; determines if destruction will occur
-  def matched_not_nil(p1_card, p2_card)
-    p1_card == p2_card && p1_card.nil? == false
-  end
-  # for winner method; takes index position and returns winning player
-  def who_wins(card)
-    if ranker(@player1, card) > ranker(@player2, card)
-      @player1
-    else
-      @player2
+  # shovels spoils of war into winner's deck and flattens it
+  def award_spoils(winner)
+    unless winner == 'No Winner'
+      winners_deck = winner.deck.cards
+      winners_deck << @spoils_of_war.shift(@spoils_of_war.size)
+      winners_deck.flatten!
     end
   end
 
