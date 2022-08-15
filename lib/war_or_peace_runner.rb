@@ -26,17 +26,23 @@ class Starter
   def basic_turn(games_played)
     p "Turn #{games_played}: #{@one_turn.winner.name} won 2 cards."
     pile_and_award
+    p "#{@one_turn.player1.name}: #{@one_turn.player1.deck.cards.count},"\
+    " #{@one_turn.player2.name}: #{@one_turn.player2.deck.cards.count}"
   end
 
   def war_turn(games_played)
     p "Turn #{games_played}: WAR - #{@one_turn.winner.name} won 6 cards."
     pile_and_award
+    p "#{@one_turn.player1.name}: #{@one_turn.player1.deck.cards.count},"\
+    " #{@one_turn.player2.name}: #{@one_turn.player2.deck.cards.count}"
   end
 
   def mad_turn(games_played)
     p "Turn #{games_played}: *mutually assured destruction*"\
     " 6 cards removed from play."
     pile_and_award
+    p "#{@one_turn.player1.name}: #{@one_turn.player1.deck.cards.count},"\
+    " #{@one_turn.player2.name}: #{@one_turn.player2.deck.cards.count}"
   end
 
   def start
