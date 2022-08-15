@@ -35,6 +35,8 @@ class Turn
 
   # returns which player has the winning card each round
   def which_card_wins(card)
+    return @player2 if card_ranker(@player1, card) == nil
+    return @player1 if card_ranker(@player2, card) == nil
     return @player1 if card_ranker(@player1, card) > card_ranker(@player2, card)
     @player2
   end
@@ -68,7 +70,7 @@ class Turn
 
   # shovels spoils of war into winner's deck and flattens it
   def award_spoils(winner)
-    unless winner == 'No Winner'
+    unless winner == 'No Winner' || winner == nil
       winners_deck = winner.deck.cards
       winners_deck << @spoils_of_war.shift(@spoils_of_war.size)
       winners_deck.flatten!

@@ -1,4 +1,4 @@
-require './lib/war_or_peace_runner'
+require './lib/full_deck_maker'
 
 RSpec.describe FullDeckMaker do
   let(:cards) { FullDeckMaker.new }
@@ -7,7 +7,9 @@ RSpec.describe FullDeckMaker do
     it 'exists' do
       expect(cards).to be_an_instance_of(FullDeckMaker)
     end
+  end
 
+  describe '#deck_builder' do
     it 'has 52 cards in deck' do
       expect(cards.full_deck.count).to eq(52)
     end
@@ -40,10 +42,9 @@ RSpec.describe FullDeckMaker do
   describe '#deck_shuffler' do
     it 'shuffles the deck' do
       cards.deck_shuffler
-      expect(cards.shuffled_deck[0].rank).to_not be(14)
-      cards.shuffled_deck.each do |x|
-        p "[#{x.suit}, #{x.value}, #{x.rank}]"
-      end
+      card_zero = cards.shuffled_deck[0]
+      test_card = [card_zero.suit, card_zero.value, card_zero.rank]
+      expect(test_card).to_not eq([:diamond, 'ace', 14])
     end
   end
 
