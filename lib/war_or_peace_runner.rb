@@ -3,14 +3,25 @@ require './lib/card'
 # create a 52 card deck
 class FullDeckMaker
 
-  attr_reader :full_deck, :output
+  attr_reader :full_deck,
+              :shuffled_deck,
+              :output,
+              :first_half_shuffled,
+              :second_half_shuffled
 
   def initialize
     @full_deck = []
-    @first_deck = []
-    @second_deck = []
+    @shuffled_deck = []
+    @first_half_shuffled = []
+    @second_half_shuffled = []
 
+    build_shuffle_split
+  end
+
+  def build_shuffle_split
     deck_builder
+    deck_shuffler
+    deck_splitter
   end
 
   def deck_builder
@@ -30,29 +41,27 @@ class FullDeckMaker
       'Queen' => 12,
       'King' => 13
     }
-    # make the whole deck
+    # iterates through each suit and each value/rank hash to make the deck
     @suits.each do |x|
-      @value_and_rank.each do |k,v|
+      @value_and_rank.each do |k, v|
         @full_deck << Card.new(x, k, v)
       end
     end
-
+  end
+  # randomizes the deck
+  def deck_shuffler
+    @shuffled_deck = @full_deck.shuffle
+  end
+  # splits deck into two decks
+  def deck_splitter
+    @first_half_shuffled = @shuffled_deck.slice!(0, 26)
+    @second_half_shuffled = @shuffled_deck.slice!(0, 26)
   end
 end # FullDeckMaker Class End
 
 
+
 # PROGRAM START
-
-
-
-# print check (make test for this)
-deck = FullDeckMaker.new.full_deck
-@output = ""
-deck.each do |x|
-  @output.concat("[#{x.suit}, #{x.value}, #{x.rank}] ")
-end
-# how many cards
-print @output
 
 
 
