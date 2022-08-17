@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require './lib/card'
 require './lib/deck'
 require './lib/player'
@@ -5,7 +7,6 @@ require './lib/turn'
 
 # create a 52 card deck
 class FullDeckMaker
-
   attr_reader :full_deck,
               :shuffled_deck,
               :output,
@@ -22,17 +23,18 @@ class FullDeckMaker
   end
 
   def build_shuffle_split
+    deck_library
     deck_builder
     deck_shuffler
     deck_splitter
   end
 
-  def deck_builder
+  def deck_library
     @suits = [:diamond,
               :heart,
               :club,
               :spade]
-              
+
     @value_and_rank = {
       'ace' => 14,
       '2' => 2,
@@ -48,6 +50,9 @@ class FullDeckMaker
       'Queen' => 12,
       'King' => 13
     }
+  end
+
+  def deck_builder
     # iterates through each suit and each value/rank hash to make the deck
     @suits.each do |x|
       @value_and_rank.each do |k, v|
@@ -55,13 +60,15 @@ class FullDeckMaker
       end
     end
   end
+
   # randomizes the deck
   def deck_shuffler
     @shuffled_deck = @full_deck.shuffle
   end
+
   # splits deck into two decks
   def deck_splitter
     @first_half_shuffled = @shuffled_deck.slice!(0, 26)
     @second_half_shuffled = @shuffled_deck.slice!(0, 26)
   end
-end # FullDeckMaker Class End
+end

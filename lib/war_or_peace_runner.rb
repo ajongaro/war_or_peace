@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 require './lib/card'
 require './lib/deck'
 require './lib/player'
 require './lib/turn'
 require './lib/full_deck_maker'
 
+# starts the game engine
 class Starter
-
   attr_reader :player1, :player2
   attr_accessor :games_played
 
@@ -21,27 +23,27 @@ class Starter
   def pile_and_award
     @one_turn.pile_cards
     @one_turn.award_spoils(@one_turn.winner)
-    deck_counter
+    deck_tracker
   end
 
-  def deck_counter
+  def deck_tracker
     p "#{@player1.name}: #{@player1.deck.cards.count},"\
     " #{@player2.name}: #{@player2.deck.cards.count}"
   end
 
-  def basic_turn(games_played)
-    p "Turn #{games_played}: #{@one_turn.winner.name} won 2 cards."
+  def basic_turn
+    p "Turn #{@games_played}: #{@one_turn.winner.name} won 2 cards."
     pile_and_award
   end
 
-  def war_turn(games_played)
-    p "Turn #{games_played}: WAR - #{@one_turn.winner.name} won 6 cards."
+  def war_turn
+    p "Turn #{@games_played}: WAR - #{@one_turn.winner.name} won 6 cards."
     pile_and_award
   end
 
-  def mad_turn(games_played)
-    p "Turn #{games_played}: *mutually assured destruction*"\
-    " 6 cards removed from play."
+  def mad_turn
+    p "Turn #{@games_played}: *mutually assured destruction*"\
+    ' 6 cards removed from play.'
     pile_and_award
   end
 
@@ -49,31 +51,45 @@ class Starter
     until @games_played == 1_000_000
       @games_played += 1
       @one_turn = Turn.new(@player1, @player2)
+      game = @one_turn.type
 
-      basic_turn(@games_played) if @one_turn.type == :basic
-      war_turn(@games_played) if @one_turn.type == :war
-      mad_turn(@games_played) if @one_turn.type == :mutually_assured_destruction
+      basic_turn if game == :basic
+      war_turn if game == :war
+      mad_turn if game == :mutually_assured_destruction
 
-      if @player1.has_lost?
-        p "*~*~*~* #{@player2.name} has won the game! *~*~*~*"
-        break
-      elsif @player2.has_lost?
-        p "*~*~*~* #{@player1.name} has won the game! *~*~*~*"
-        break
-      end
-
+      break if anyone_lost
     end
-    p "---- DRAW ----" if @games_played == 1_000_000
+    p '---- DRAW ----' if @games_played == 1_000_000
+  end
+
+  def anyone_lost
+    if @player1.has_lost?
+      p "*~*~*~* #{@player2.name} has won the game! *~*~*~*"
+      true
+    elsif @player2.has_lost?
+      p "*~*~*~* #{@player1.name} has won the game! *~*~*~*"
+      true
+    end
   end
 end
 
-
 # PROGRAM START
-puts "Welcome to War! (or Peace) This game will be played with 52 cards."
-puts "The players today are Megan and Aurora."
+line = '*' * 67
+puts ''
+puts line
+puts '  _       __                            ____'
+puts ' | |     / /___  _____   ____  _____   / __ \\___  ____  ________ '
+puts ' | | /| / / __ `/ ___/  / __ \\/ ___/  / /_/ / _ \\/ __ `/ ___/ _ \\'
+puts ' | |/ |/ / /_/ / /     / /_/ / /     / ____/  __/ /_/ / /__/  __/'
+puts ' |__/|__/\\__,_/_/      \\____/_/     /_/    \\___/\\__,_/\\___/\\___/'
+puts ''
+puts line
+puts ''
+puts 'Welcome to War! (or Peace) This game will be played with 52 cards.'
+puts 'The players today are Megan and Aurora.'
 puts "Type 'GO' to start the game!"
-puts "------------------------------------------------------------------"
-input = gets.chomp
+puts '------------------------------------------------------------------'
+input = gets.chomp.upcase
 
 if input == 'GO'
   lets_go = Starter.new

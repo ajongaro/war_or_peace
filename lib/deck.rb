@@ -1,9 +1,11 @@
-class Deck
+# frozen_string_literal: true
 
+# a deck of Card instances
+class Deck
   attr_reader :cards
 
   # initializes deck with array of cards, empty by default
-  def initialize(cards=[])
+  def initialize(cards = [])
     @cards = cards
   end
 
@@ -21,7 +23,7 @@ class Deck
   def percent_high_ranking
     high_card_count = high_ranking_cards.count.to_f
     total_card_count = @cards.count.to_f
-    return (high_card_count / total_card_count * 100.00).round(2)
+    (high_card_count / total_card_count * 100.00).round(2)
   end
 
   def remove_card
@@ -31,6 +33,4 @@ class Deck
   def add_card(card_to_add)
     @cards << card_to_add
   end
-
-
 end
