@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rspec'
 require './lib/card'
 require './lib/deck'
@@ -36,6 +37,4 @@ RSpec.describe Player do
     2.times { player.deck.remove_card }
     expect(player.has_lost?).to be true
   end
-  
-
 end

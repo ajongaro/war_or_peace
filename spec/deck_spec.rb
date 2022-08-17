@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rspec'
 require './lib/deck'
 require './lib/card'
@@ -11,7 +12,7 @@ RSpec.describe Deck do
 
   it 'takes an array of cards as arg' do
     deck = Deck.new(['card', 'card', 'card'])
-    expect(deck.cards).to eq(['card','card','card'])
+    expect(deck.cards).to eq(['card', 'card', 'card'])
   end
 
   it 'returns rank of specified card' do
@@ -28,7 +29,7 @@ RSpec.describe Deck do
     card4 = Card.new(:club, '10', 10)
     deck = Deck.new([card, card2, card3, card4])
 
-    expect(deck.high_ranking_cards).to eq([card2,card3])
+    expect(deck.high_ranking_cards).to eq([card2, card3])
   end
 
   it 'returns percent of deck that is high ranking' do
@@ -36,7 +37,6 @@ RSpec.describe Deck do
     card2 = Card.new(:diamond, 'King', 13)
     card3 = Card.new(:heart, 'Jack', 11)
     card4 = Card.new(:club, '10', 10)
-    card5 = Card.new(:heart, '7', 7)
     deck = Deck.new([card, card2, card3, card4])
 
     expect(deck.percent_high_ranking).to eq(50.00)
@@ -61,5 +61,4 @@ RSpec.describe Deck do
     deck.add_card(card3)
     expect(deck.cards).to eq([card, card2, card3])
   end
-  
 end

@@ -1,18 +1,19 @@
 # frozen_string_literal: true
+
 require './lib/card'
 require './lib/deck'
 require './lib/player'
 require './lib/turn'
 
 RSpec.describe Turn do
-  let(:card_rank_12) { Card.new(:diamond, 'Queen', 12) }
-  let(:card_rank_3) { Card.new(:spade, '3', 3) }
-  let(:card_rank_4) { Card.new(:spade, '4', 4) }
-  let(:deck1) { Deck.new([card_rank_12, card_rank_4, card_rank_3]) }
-  let(:deck2) { Deck.new([card_rank_12, card_rank_4, card_rank_4]) }
-  let(:deck3) { Deck.new([card_rank_4, card_rank_12])}
-  let(:deck4) { Deck.new([card_rank_12])}
-  let(:player1) {Player.new('Clarisa', deck1)}
+  let(:card_rank12) { Card.new(:diamond, 'Queen', 12) }
+  let(:card_rank3) { Card.new(:spade, '3', 3) }
+  let(:card_rank4) { Card.new(:spade, '4', 4) }
+  let(:deck1) { Deck.new([card_rank12, card_rank4, card_rank3]) }
+  let(:deck2) { Deck.new([card_rank12, card_rank4, card_rank4]) }
+  let(:deck3) { Deck.new([card_rank4, card_rank12]) }
+  let(:deck4) { Deck.new([card_rank12]) }
+  let(:player1) { Player.new('Clarisa', deck1) }
 
   it 'exists' do
     player2 = Player.new('Tom', deck2)
@@ -42,7 +43,6 @@ RSpec.describe Turn do
     end
 
     it 'is war type when ranks ranks are same' do
-
       player2 = Player.new('Rachel', deck2)
       turn = Turn.new(player1, player2)
 
@@ -65,7 +65,6 @@ RSpec.describe Turn do
   end
 
   describe '#winner' do
-
     it 'determines winner for basic type' do
       player2 = Player.new('Lisa', deck3)
       turn = Turn.new(player1, player2)
@@ -90,19 +89,19 @@ RSpec.describe Turn do
 
   describe '#piles_cards' do
     it 'piles cards into spoils of war for basic' do
-      deck1 = Deck.new([card_rank_12])
-      deck2 = Deck.new([card_rank_3])
+      deck1 = Deck.new([card_rank12])
+      deck2 = Deck.new([card_rank3])
       player1 = Player.new('Tony', deck1)
       player2 = Player.new('Lisa', deck2)
       turn = Turn.new(player1, player2)
 
       turn.pile_cards
-      expect(turn.spoils_of_war.include?(card_rank_12 && card_rank_3)).to be true
+      expect(turn.spoils_of_war.include?(card_rank12 && card_rank3)).to be true
     end
 
     it 'piles cards into spoils for war' do
-      deck1 = Deck.new([card_rank_12, card_rank_3, card_rank_4])
-      deck2 = Deck.new([card_rank_12, card_rank_4, card_rank_3])
+      deck1 = Deck.new([card_rank12, card_rank3, card_rank4])
+      deck2 = Deck.new([card_rank12, card_rank4, card_rank3])
       player1 = Player.new('Clarisa', deck1)
       player2 = Player.new('Rachel', deck2)
       turn = Turn.new(player1, player2)
@@ -116,8 +115,8 @@ RSpec.describe Turn do
     end
 
     it 'six cards lost when mutually assured destruction' do
-      deck1 = Deck.new([card_rank_12, nil, card_rank_3])
-      deck2 = Deck.new([card_rank_12, nil, card_rank_3])
+      deck1 = Deck.new([card_rank12, nil, card_rank3])
+      deck2 = Deck.new([card_rank12, nil, card_rank3])
       player1 = Player.new('Clarisa', deck1)
       player2 = Player.new('Rachel', deck2)
       turn = Turn.new(player1, player2)
@@ -134,8 +133,8 @@ RSpec.describe Turn do
 
   describe '#award_spoils' do
     it 'awards spoils pile to winning player of war' do
-      deck1 = Deck.new([card_rank_12, card_rank_3, card_rank_4])
-      deck2 = Deck.new([card_rank_12, card_rank_4, card_rank_3])
+      deck1 = Deck.new([card_rank12, card_rank3, card_rank4])
+      deck2 = Deck.new([card_rank12, card_rank4, card_rank3])
       player1 = Player.new('Clarisa', deck1)
       player2 = Player.new('Rachel', deck2)
       turn = Turn.new(player1, player2)
@@ -152,8 +151,8 @@ RSpec.describe Turn do
     end
 
     it 'awards spoils pile to winning player of basic' do
-      deck1 = Deck.new([card_rank_12, card_rank_3, card_rank_4])
-      deck2 = Deck.new([card_rank_3, card_rank_4, card_rank_3])
+      deck1 = Deck.new([card_rank12, card_rank3, card_rank4])
+      deck2 = Deck.new([card_rank3, card_rank4, card_rank3])
       player1 = Player.new('Clarisa', deck1)
       player2 = Player.new('Rachel', deck2)
       turn = Turn.new(player1, player2)
@@ -170,8 +169,8 @@ RSpec.describe Turn do
     end
 
     it "doesn't award anything during destruction" do
-      deck1 = Deck.new([card_rank_12, card_rank_3, card_rank_4])
-      deck2 = Deck.new([card_rank_12, card_rank_4, card_rank_4])
+      deck1 = Deck.new([card_rank12, card_rank3, card_rank4])
+      deck2 = Deck.new([card_rank12, card_rank4, card_rank4])
       player1 = Player.new('Clarisa', deck1)
       player2 = Player.new('Rachel', deck2)
       turn = Turn.new(player1, player2)

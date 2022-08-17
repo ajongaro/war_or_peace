@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require './lib/full_deck_maker'
 
 RSpec.describe FullDeckMaker do
@@ -18,7 +19,7 @@ RSpec.describe FullDeckMaker do
     it 'has all the right cards' do
       @output = ''
       cards.full_deck.each do |x|
-        @output = @output + ("[#{x.suit}, #{x.value}, #{x.rank}] ")
+        @output += "[#{x.suit}, #{x.value}, #{x.rank}] "
       end
 
       expect(@output).to eq('[diamond, ace, 14] [diamond, 2, 2]'\
