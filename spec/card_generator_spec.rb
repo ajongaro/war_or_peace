@@ -20,5 +20,15 @@ RSpec.describe CardGenerator do
       expect(File.writable?( card_gen.text_file )).to be true
     end
 
+    it 'fills cards with a deck' do
+      card_gen = CardGenerator.new('cards.txt')
+      require "pry"; binding.pry
+      puts card_gen.cards
+    end
+  end
+
+  describe "#text_file_reader" do
+    card_gen = CardGenerator.new('cards.txt')
+    p card_gen.cards
   end
 end

@@ -1,17 +1,35 @@
 # frozen_string_literal: true
 
+require './lib/card'
+
 # generates a text file with full deck of playing cards
 class CardGenerator
-  attr_reader :text_file, :suits, :value_and_rank
+  attr_reader :text_file, :cards
 
-  def initialize
-    @text_file = File.new("cards.txt", 'w')
-    deck_library
-    deck_builder
+  def initialize(filename = 'cards.txt')
+    @cards = []
+    @card_file = filename
+    text_to_card_deck
   end
 
 
+  def text_to_card_deck
+    File.foreach(@card_file) do |line|
+      arr = line.split(',').map(&:strip)
+      suit = arr[1].to_sym
+      value = arr[0].to_s
+      rank = arr[2].to_i
+      @cards << Card.new(suit, value, rank)
+    end
+  end
 
+  # if no text file exists, call this
+  def generate_new_card_file
+    @text_file = File.new('cards.txt', 'w')
+    deck_library
+    text_file_builder
+    @text_file.close
+  end
 
   def deck_library
     @suits = [:diamond,
@@ -36,12 +54,11 @@ class CardGenerator
     }
   end
 
-
-  def deck_builder
-    # iterates through each suit and each value/rank hash to make the deck
+  def text_file_builder
+    # 52-card pickup is not fun, 52-card writeup is less so
     @suits.each do |x|
       @value_and_rank.each do |k, v|
-        @text_file.syswrite("#{k}, #{x}, #{v}")
+        @text_file.write("#{k}, #{x}, #{v}\n")
       end
     end
   end
