@@ -93,9 +93,13 @@ puts 'Welcome to War! (or Peace) This game will be played with 52 cards.'
 puts 'The players today are Megan and Aurora.'
 puts "Type 'GO' to start the game!"
 puts '------------------------------------------------------------------'
-input = gets.chomp.upcase
 
-if input == 'GO'
+input = ''
+until input == 'GO'
+  input = gets.chomp.upcase
+  break if input == 'GO'
+  puts "You didn't type it right. Try again."
+end
+
   lets_go = Starter.new
   lets_go.start
-end
