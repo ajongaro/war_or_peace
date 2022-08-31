@@ -4,7 +4,7 @@ require './lib/card'
 require './lib/deck'
 require './lib/player'
 require './lib/turn'
-require './lib/full_deck_maker'
+require './lib/card_generator'
 
 # starts the game engine
 class Starter
@@ -12,9 +12,11 @@ class Starter
   attr_accessor :games_played
 
   def initialize
-    @game_ready_deck = FullDeckMaker.new
-    @deck1 = Deck.new(@game_ready_deck.first_half_shuffled)
-    @deck2 = Deck.new(@game_ready_deck.second_half_shuffled)
+    @game_deck = CardGenerator.new('cards.txt')
+    @game_deck.shuffle_cards
+    @game_deck.deal_cards
+    @deck1 = Deck.new(@game_deck.half_deck_one)
+    @deck2 = Deck.new(@game_deck.half_deck_two)
     @player1 = Player.new('Megan', @deck1)
     @player2 = Player.new('Aurora', @deck2)
     @games_played = 0
@@ -27,22 +29,22 @@ class Starter
   end
 
   def deck_tracker
-    p "#{@player1.name}: #{@player1.deck.cards.count},"\
+    puts "#{@player1.name}: #{@player1.deck.cards.count},"\
     " #{@player2.name}: #{@player2.deck.cards.count}"
   end
 
   def basic_turn
-    p "Turn #{@games_played}: #{@one_turn.winner.name} won 2 cards."
+    puts "Turn #{@games_played}: #{@one_turn.winner.name} won 2 cards. "
     pile_and_award
   end
 
   def war_turn
-    p "Turn #{@games_played}: WAR - #{@one_turn.winner.name} won 6 cards."
+    puts "Turn #{@games_played}: WAR - #{@one_turn.winner.name} won 6 cards."
     pile_and_award
   end
 
   def mad_turn
-    p "Turn #{@games_played}: *mutually assured destruction*"\
+    puts "Turn #{@games_played}: *mutually assured destruction*"\
     ' 6 cards removed from play.'
     pile_and_award
   end
@@ -53,9 +55,11 @@ class Starter
       @one_turn = Turn.new(@player1, @player2)
       game = @one_turn.type
 
-      basic_turn if game == :basic
-      war_turn if game == :war
-      mad_turn if game == :mutually_assured_destruction
+      case game
+      when :basic then basic_turn
+      when :war then war_turn
+      when :mutually_assured_destruction then mad_turn
+      end
 
       break if anyone_lost
     end
@@ -89,9 +93,13 @@ puts 'Welcome to War! (or Peace) This game will be played with 52 cards.'
 puts 'The players today are Megan and Aurora.'
 puts "Type 'GO' to start the game!"
 puts '------------------------------------------------------------------'
-input = gets.chomp.upcase
 
-if input == 'GO'
+input = ''
+until input == 'GO'
+  input = gets.chomp.upcase
+  break if input == 'GO'
+  puts "You didn't type it right. Try again."
+end
+
   lets_go = Starter.new
   lets_go.start
-end
