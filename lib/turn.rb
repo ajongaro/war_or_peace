@@ -33,8 +33,29 @@ class Turn
       else
         player2
       end
-    else
+    elsif self.type == :mutually_assured_destruction
       'No Winner'
+    end
+  end
+
+  def pile_cards
+    if self.type == :basic
+      spoils_of_war << player1.deck.cards.slice!(0)
+      spoils_of_war << player2.deck.cards.slice!(0)
+    elsif self.type == :war
+      spoils_of_war << player1.deck.cards.slice!(0, 3)
+      spoils_of_war << player2.deck.cards.slice!(0, 3)
+      spoils_of_war.flatten!
+    elsif self.type == :mutually_assured_destruction
+      player1.deck.cards.slice!(0, 3)
+      player2.deck.cards.slice!(0, 3)
+    end
+  end
+
+  def award_spoils(winner)
+    unless winner == 'No Winner'
+      @spoils_of_war.each { |x| winner.deck.cards << x }
+      @spoils_of_war = []
     end
   end
 

@@ -87,7 +87,7 @@ RSpec.describe Turn do
     end
   end
 
-  describe '#piles_cards' do
+  describe '#pile_cards' do
     it 'piles cards into spoils of war for basic' do
       deck1 = Deck.new([card_rank12])
       deck2 = Deck.new([card_rank3])
