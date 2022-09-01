@@ -53,9 +53,8 @@ class Starter
     until @games_played == 1_000_000
       @games_played += 1
       @one_turn = Turn.new(@player1, @player2)
-      game = @one_turn.type
 
-      case game
+      case @one_turn.type
       when :basic then basic_turn
       when :war then war_turn
       when :mutually_assured_destruction then mad_turn
@@ -77,29 +76,34 @@ class Starter
   end
 end
 
-# PROGRAM START
-line = '*' * 67
-puts ''
-puts line
-puts '  _       __                            ____'
-puts ' | |     / /___  _____   ____  _____   / __ \\___  ____  ________ '
-puts ' | | /| / / __ `/ ___/  / __ \\/ ___/  / /_/ / _ \\/ __ `/ ___/ _ \\'
-puts ' | |/ |/ / /_/ / /     / /_/ / /     / ____/  __/ /_/ / /__/  __/'
-puts ' |__/|__/\\__,_/_/      \\____/_/     /_/    \\___/\\__,_/\\___/\\___/'
-puts ''
-puts line
-puts ''
-puts 'Welcome to War! (or Peace) This game will be played with 52 cards.'
-puts 'The players today are Megan and Aurora.'
-puts "Type 'GO' to start the game!"
-puts '------------------------------------------------------------------'
-
-input = ''
-until input == 'GO'
-  input = gets.chomp.upcase
-  break if input == 'GO'
-  puts "You didn't type it right. Try again."
+def welcome
+  line = '*' * 67
+  puts ''
+  puts line
+  puts '  _       __                            ____'
+  puts ' | |     / /___  _____   ____  _____   / __ \\___  ____  ________ '
+  puts ' | | /| / / __ `/ ___/  / __ \\/ ___/  / /_/ / _ \\/ __ `/ ___/ _ \\'
+  puts ' | |/ |/ / /_/ / /     / /_/ / /     / ____/  __/ /_/ / /__/  __/'
+  puts ' |__/|__/\\__,_/_/      \\____/_/     /_/    \\___/\\__,_/\\___/\\___/'
+  puts ''
+  puts line
+  puts ''
+  puts 'Welcome to War! (or Peace) This game will be played with 52 cards.'
+  puts 'The players today are Megan and Aurora.'
+  puts "Type 'GO' to start the game!"
+  puts '------------------------------------------------------------------'
 end
 
-  lets_go = Starter.new
-  lets_go.start
+def go
+  input = ''
+  until input == 'GO'
+    input = gets.chomp.upcase
+    break if input == 'GO'
+    puts "You didn't type it right. Try again."
+  end
+end
+
+welcome
+go
+
+Starter.new.start

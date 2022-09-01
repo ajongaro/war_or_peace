@@ -1,3 +1,5 @@
+# DEPRICATED FOR TURN.RB
+
 # frozen_string_literal: true
 
 # one turn of the game
